@@ -20,6 +20,10 @@ Removing the alternative I had added to point python3 to python3.10
 sudo update-alternatives --remove-all python3
 ```
 
+```
+sudo apt-get install python3.10-dev python3.10-venv
+```
+
 Fixing the symlink to point at 3.10
 ```
 sudo ln -sf /usr/bin/python3.10 /usr/bin/python3
