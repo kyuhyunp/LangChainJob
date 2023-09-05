@@ -1,8 +1,19 @@
 # LangChainJob
 
-## Issues
+## Issues and Solution
 
 ### ModuleNotFoundError: No module named 'apt_pkg' after python upgrade to version 3.10
+```
+sudo apt upgrade
+```
+caused
+
+```
+ModuleNotFoundError: No module named 'apt_pkg'
+```
+after upgrading python to version 3.10
+
+### Solution
 
 Removing the alternative I had added to point python3 to python3.10
 ```
