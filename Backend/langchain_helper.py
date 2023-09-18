@@ -6,13 +6,13 @@ from constants import serpapi_key
 
 
 from langchain import LLMChain
-from langchain.agents import AgentType, load_tools, AgentExecutor, ZeroShotAgent
+from langchain.agents import load_tools, AgentExecutor, ZeroShotAgent
 from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders import PyPDFLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.prompts import PromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
 
