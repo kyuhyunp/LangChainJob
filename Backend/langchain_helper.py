@@ -4,7 +4,6 @@ import os, sys
 from constants import openapi_key
 from constants import serpapi_key
 
-
 from langchain import LLMChain
 from langchain.agents import load_tools, AgentExecutor, ZeroShotAgent
 from langchain.chains import ConversationalRetrievalChain
@@ -23,15 +22,6 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 os.environ['OPENAI_API_KEY'] = openapi_key
 os.environ['SERPAPI_API_KEY'] = serpapi_key
 
-
-def get_documents():
-    loader = PyPDFLoader("Data/email.pdf")
-    documents = loader.load_and_split()
-
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    documents = text_splitter.split_documents(documents)
-
-    return documents
 
 def get_memory():
     return ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -93,3 +83,5 @@ def get_agent_chain(memory):
 def get_agent_answer(agent_chain, query: str):
     result = agent_chain.run(query)
     return result
+
+

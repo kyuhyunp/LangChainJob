@@ -1,13 +1,14 @@
 import streamlit
 import langchain_helper
+import gmail_loader
 
-CONVERSATION_QS = ["What day did I apply?", "What company did I apply to?", "What position did I apply for?"]
+CONVERSATION_QS = ["What company did I apply to?", "On what date did I apply?", "What position did I apply for?"]
 AGENT_QS = ["What is the URL address of the company?"]
 
 
 streamlit.title("Job Helper")
 
-documents = langchain_helper.get_documents()
+documents = gmail_loader.get_documents("2023/09/10", "2023/09/16")
 memory = langchain_helper.get_memory()
 conversation_chain = langchain_helper.get_conversational_retrieval_chain(documents, memory)
 for query in CONVERSATION_QS:

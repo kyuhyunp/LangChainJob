@@ -26,10 +26,13 @@ import pickle
 import os.path
 import base64
 from bs4 import BeautifulSoup
-  
+
+from langchain.schema.document import Document
+
 # Define the SCOPES. If modifying it, delete the token.pickle file.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
-  
+
+
 def getEmails():
     # Variable creds will store the user access token.
     # If no valid token found, we will create one.
@@ -59,20 +62,19 @@ def getEmails():
     service = build('gmail', 'v1', credentials=creds)
   
     # request a list of all the messages
-    result = service.users().messages().list(userId='me').execute()
-  
-    # We can also pass maxResults to get any number of emails. Like this:
-    # result = service.users().messages().list(maxResults=200, userId='me').execute()
+    # https://developers.google.com/gmail/api/reference/rest/v1/users.messages/list
+    result = service.users().messages().list(userId='me', q='after:1504483200 before:1654495199').execute()
     messages = result.get('messages')
-  
     # messages is a list of dictionaries where each dictionary contains a message id.
+
+    if messages is None:
+        return
   
+    documents = []
     # iterate through all the messages
     for msg in messages:
         # Get the message from its id
         txt = service.users().messages().get(userId='me', id=msg['id']).execute()
-  
-        # Use try-except to avoid any Errors
  
         # Get value of 'payload' from dictionary 'txt'
         payload = txt['payload']
@@ -87,22 +89,52 @@ def getEmails():
 
         # The Body of the message is in Encrypted format. So, we have to decode it.
         # Get the data and decode it with base 64 decoder.
+        if 'parts' not in payload:
+            continue
+        
         parts = payload.get('parts')[0]
+
+        if not 'body' in parts or not 'data' in parts['body']:
+            continue
+
         data = parts['body']['data']
         data = data.replace("-","+").replace("_","/")
         decoded_data = base64.b64decode(data)
 
+
         # Now, the data obtained is in lxml. So, we will parse 
         # it with BeautifulSoup library
         soup = BeautifulSoup(decoded_data , "lxml")
+
+        if soup is None or len(soup) == 0:
+            continue
+
         body = soup.body()
 
+        documents.append(Document(page_content=str(body)))
+
+
+
         # Printing the subject, sender's email and message
-        print("Subject: ", subject)
-        print("From: ", sender)
+        # print("Subject: ", subject)
+        # # print("From: ", sender)
         print("Message: ", body)
         print('\n')
+
+    print(type(documents))
+    print(documents)
         
   
   
 getEmails()
+
+
+# from llama_index import download_loader
+
+# GmailReader = download_loader('GmailReader')
+# loader = GmailReader(query="after: 1504483200 before: 1654495199 label:inbox")
+# documents = loader.load_data()
+
+
+# print(type(documents))
+
