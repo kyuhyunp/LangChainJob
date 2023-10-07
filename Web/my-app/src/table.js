@@ -7,13 +7,13 @@ class Table extends React.Component {
     
     render() {
         return (
-            <table class="tg">
+            <table>
                 <thead>
                     <tr>
-                        <td class="tg-0lax">Contact Date</td>
-                        <td class="tg-0lax">Employer Name</td>
-                        <td class="tg-0lax">Job Title</td>
-                        <td class="tg-0lax">Contact Information</td>
+                        <td>Contact Date</td>
+                        <td>Employer Name</td>
+                        <td>Job Title</td>
+                        <td>Contact Information</td>
                     </tr>
                 </thead>
             </table>
