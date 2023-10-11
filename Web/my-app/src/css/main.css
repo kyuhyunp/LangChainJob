@@ -97,13 +97,24 @@ table {
     background-color: black;
 }
 
-thead {
+thead{
     background-color: rgb(228, 227, 227);
 }
+
+tbody #evenRow {
+    background-color: white;
+}
+
+tbody #oddRow {
+    background-color: #e6f4ff;
+}
+
+
 
 td {
     text-align: center;
 }
+
 /* For creating a manual addition pop up*/
 
 #manualAddition {
@@ -119,19 +130,62 @@ td {
     flex-direction: column;
 }
 
-#manualAddition form {
-    margin-top: 10px;
-    width: 25%;
+#manualAdditionInner {
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    width: 70%;
+    background-color: white;
 }
 
-#manualAddition label {
+#manualAdditionTitle {
+    display: flex;
+}
+
+#manualAdditionTitle h2 {
+    margin-left: 20px;
+    margin-top: 20px;
+    flex-grow: 1;
+}
+
+#manualAdditionTitle button {
+    color: white;
+    background-color: red;
+    border: none;
+    width: 70px;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 20px;
+    
+}
+
+
+#manualAdditionInner p {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+#manualAdditionFormContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+#manualAdditionInner form {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 50%;
+}
+
+#manualAdditionInner label {
     display: flex;
     flex-direction: column;
     text-align: center;
 }
 
-
-#manualAddition input {
+#manualAdditionInner input {
     text-align: center;
     margin-bottom: 10px;
 }
