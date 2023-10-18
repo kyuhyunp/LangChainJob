@@ -97,8 +97,12 @@ table {
     background-color: black;
 }
 
-thead{
+thead {
     background-color: rgb(228, 227, 227);
+}
+
+thead td {
+    font-size: 1.15rem;
 }
 
 tbody #evenRow {
@@ -117,7 +121,7 @@ td {
 
 /* For creating a manual addition pop up*/
 
-#manualAddition {
+.popUpContainer {
     position: fixed;
     top: 0;
     left: 0;
@@ -130,24 +134,24 @@ td {
     flex-direction: column;
 }
 
-#manualAdditionInner {
+.popUpInner {
     border-radius: 10px;
     box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
     width: 70%;
     background-color: white;
 }
 
-#manualAdditionTitle {
+.popUpTitle {
     display: flex;
 }
 
-#manualAdditionTitle h2 {
+.popUpTitle h2 {
     margin-left: 20px;
     margin-top: 20px;
     flex-grow: 1;
 }
 
-#manualAdditionTitle button {
+.popUpTitle button {
     color: white;
     background-color: red;
     border: none;
@@ -156,11 +160,9 @@ td {
     margin-top: 10px;
     margin-right: 10px;
     border-radius: 20px;
-    
 }
 
-
-#manualAdditionInner p {
+.popUpInner p {
     margin-left: 20px;
     margin-top: 10px;
 }
@@ -173,22 +175,55 @@ td {
     margin-top: 10px;
 }
 
-#manualAdditionInner form {
+.popUpInner form {
     margin-top: 20px;
     margin-bottom: 20px;
     width: 50%;
 }
 
-#manualAdditionInner label {
+.popUpInner label {
     display: flex;
     flex-direction: column;
     text-align: center;
 }
 
-#manualAdditionInner input {
+.popUpInner input {
     text-align: center;
     margin-bottom: 10px;
 }
+
+/* For select weeks */
+.selectWeekContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /* height: 55vh; */
+}
+
+.selectWeekContainer h2 {
+     margin-bottom: 10px; 
+}
+
+.selectWeekContainer ul {
+    list-style-type: none;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    max-height: 50vh;
+    width: 35%;
+}
+
+#dropDownButton {
+    width: 100%;
+    border-radius: 0px;
+    box-shadow: none;
+    border-color: black;
+
+}
+
+
 
 
 

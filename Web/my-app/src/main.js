@@ -3,7 +3,8 @@ import React from 'react';
 import './css/main.css';
 import Table from './table.js';
 import ManualAdditionPopUp from './manualAdditionPopUp.js';
-
+import SelectWeek from './selectWeek.js'
+import { QUERY_STATUS } from './queryStatus.js';
 
 class Main extends React.Component {
     constructor(props) {
@@ -11,13 +12,8 @@ class Main extends React.Component {
         this.state = {
             searchLogs: [],
             manualAddition: false,
-        }
-    }
-
-    componentDidUpdate(_, prevState) {
-        
-        if (prevState.searchLogs !== this.state.searchLogs) {
-            
+            queryStatus: QUERY_STATUS.OFF,
+            eventSource: undefined,
         }
     }
 
@@ -25,6 +21,12 @@ class Main extends React.Component {
         const manualAddition = this.state.manualAddition;
         this.setState({
             manualAddition: !manualAddition,
+        });
+    }
+
+    moveQueryStatusToSelect() {
+        this.setState({
+            queryStatus: QUERY_STATUS.SELECT,
         });
     }
 
@@ -115,8 +117,47 @@ class Main extends React.Component {
         return true;
     }
 
+
+
+
+    startEventSource() {
+      if (this.eventSource !== undefined) return;
+
+      this.eventSource = new EventSource("http://127.0.0.1:8000/");
+      this.eventSource.onopen = e => console.log("ES open");
+      this.eventSource.onerror = e => console.log("ES error");
+      this.eventSource.onmessage = e => console.log(e.data);
+    }
+
+
+    /**
+     * https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
+     * 
+     * set the query status to pending
+     * @param {*} week: array of strings in (MM/DD/YYYY - MM/DD/YYYY) format
+     */
+    queryWeek(week) {
+        console.log(week.split(" - "));
+
+        // Option 1: include a date range in the query
+        // this.eventSource = new EventSource("http://000000000:8000/?start=2021-01-01&end=2021-01-07");
+
+        // Option 2: send a REST API to start off
+        // Then use sse to listen to the response
+
+        this.eventSource = new EventSource("http://127.0.0.1:8000/");
+        this.eventSource.onmessage = (e) => {
+            console.log(`message: ${e.data}`);
+          };
+
+        this.setState({
+            queryStatus: QUERY_STATUS.PENDING,
+        });
+    }
+
+
     render() {
-        const { searchLogs, manualAddition } = this.state;
+        const { searchLogs, manualAddition, queryStatus } = this.state;
         
         return (
             <div id="container">
@@ -136,7 +177,9 @@ class Main extends React.Component {
                             <button onClick={() => this.toggleManualAddition()}>Manually Add Job</button>
                         </div>
                         <div className="button-container"> 
-                            <button>Query Week</button>
+                            { this.state.queryStatus === QUERY_STATUS.OFF ? 
+                            <button onClick={() => this.moveQueryStatusToSelect()}>Query Week</button> :
+                            <button disabled>Querying...</button> }
                         </div>
                     </section>
                     <section id="job-list">
@@ -146,6 +189,14 @@ class Main extends React.Component {
                         <Table searchLogs={searchLogs}/>
                     </section>
                 </div>
+
+                <SelectWeek 
+                    status={queryStatus} 
+                    selectWeek={(week) => this.queryWeek(week)}
+                    handleClose={() => this.setState({queryStatus: QUERY_STATUS.OFF})}
+                >
+                </SelectWeek> 
+
                 <ManualAdditionPopUp 
                     trigger={manualAddition} 
                     handleSubmit={(event, inputs) => 
