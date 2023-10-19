@@ -5,6 +5,7 @@ import Table from './table.js';
 import ManualAdditionPopUp from './manualAdditionPopUp.js';
 import SelectWeek from './selectWeek.js'
 import { QUERY_STATUS } from './queryStatus.js';
+import LoadingScreen from './loadingScreen';
 
 
 class Main extends React.Component {
@@ -14,7 +15,7 @@ class Main extends React.Component {
             searchLogs: [],
             manualAddition: false,
             queryStatus: QUERY_STATUS.OFF,
-            data: null,
+            editEntry: null,
         }
     }
 
@@ -153,7 +154,7 @@ class Main extends React.Component {
 
         const startEndDates = week.split(" ~ ");
 
-        let url = new URL('http://localhost:5000/stream')
+        let url = new URL('http://localhost:5000/queryWeek')
         url.searchParams.append('start', startEndDates[0]);
         url.searchParams.append('end', startEndDates[1]);
 
@@ -170,6 +171,17 @@ class Main extends React.Component {
         }
     }
 
+    editEntry(index) {
+        this.setState({
+            editEntry: index
+        });
+    }
+
+    deleteEntry(index) {
+        this.setState({
+            searchLogs: this.state.searchLogs.filter((_, i) => i !== index)
+        });
+    }
 
     render() {
         const { searchLogs, manualAddition, queryStatus } = this.state;
@@ -189,8 +201,9 @@ class Main extends React.Component {
                 <div id="content-container">
                     <section id="search-bar">
                         <div className="button-container"> 
-                        
-                            <button onClick={() => this.toggleManualAddition()}>Manually Add Job</button>
+                        { this.state.queryStatus === QUERY_STATUS.OFF ? 
+                            <button onClick={() => this.toggleManualAddition()}>Manually Add Job</button> :
+                            <button disabled>Querying...</button> }
                         </div>
                         <div className="button-container"> 
                             { this.state.queryStatus === QUERY_STATUS.OFF ? 
@@ -202,7 +215,9 @@ class Main extends React.Component {
                         <p>Below is a list of the job search contacts.</p>
                         <h3>Job Search Logs</h3>
 
-                        <Table searchLogs={searchLogs}/>
+                        <Table searchLogs={searchLogs} 
+                        editEntry={(index) => this.editEntry(index)}
+                        deleteEntry={(index) => this.deleteEntry(index)}/>
                     </section>
                 </div>
 
@@ -221,7 +236,7 @@ class Main extends React.Component {
                 >
                 </ManualAdditionPopUp> 
 
-                (queryStatus)
+                { queryStatus === QUERY_STATUS.PENDING && <LoadingScreen/> } 
                 
             </div>
         );

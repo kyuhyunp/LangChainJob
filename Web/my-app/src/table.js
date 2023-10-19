@@ -9,6 +9,10 @@ const Rows = (props) => {
                 <td>{props.employerName}</td>
                 <td>{props.jobTitle}</td>
                 <td>{props.contactInfo}</td>
+                <td>
+                    <button onClick={props.editEntry}>Edit</button>
+                    <button onClick={props.deleteEntry}>Delete</button>
+                </td> 
             </tr>
         );
     }
@@ -19,6 +23,10 @@ const Rows = (props) => {
             <td>{props.employerName}</td>
             <td>{props.jobTitle}</td>
             <td>{props.contactInfo}</td>
+            <td>
+                <button onClick={props.editEntry}>Edit</button>
+                <button onClick={props.deleteEntry}>Delete</button>
+            </td> 
         </tr>
     );
 }
@@ -36,6 +44,8 @@ const TableBody = (props) => {
                 jobTitle={row.jobTitle} 
                 contactInfo={row.contactInfo} 
                 even={index % 2 === 0}
+                editEntry={() => props.editEntry(index)}
+                deleteEntry={() => props.deleteEntry(index)}
             />;
         })}
     </tbody>);
@@ -50,9 +60,12 @@ function Table(props) {
                     <td>Employer Name</td>
                     <td>Job Title</td>
                     <td>Contact Information</td>
+                    <td>Actions</td>
                 </tr>
             </thead>
-            <TableBody searchLogs={props.searchLogs} />
+            <TableBody searchLogs={props.searchLogs} 
+            editEntry={(index) => props.editEntry(index)}
+            deleteEntry={(index) => props.deleteEntry(index)}/>
         </table>
     );
 }

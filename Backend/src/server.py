@@ -1,6 +1,7 @@
 from flask import Flask, Response, request
 from flask_cors import cross_origin
 import json
+import time
 
 import gmail_loader
 import langchain_helper
@@ -45,7 +46,7 @@ def stream():
         return f"data: {json.dumps(ret)}\n\n"
     
     #get_data(start=startDate, end=endDate)
-
+    time.sleep(3)
     ret = [
         {
             "date": "10-01-2023",

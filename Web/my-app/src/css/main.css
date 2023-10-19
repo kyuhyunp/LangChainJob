@@ -220,16 +220,13 @@ td {
     border-radius: 0px;
     box-shadow: none;
     border-color: black;
-
 }
 
-
-
-
-
-
-
-
-
-
+/* loading screen */
+#loading {
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
