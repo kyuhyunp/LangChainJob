@@ -18,8 +18,7 @@ function getPrevWeeks() {
     for (let week = 0; week < WEEKS; ++week) {
         const start = moment(currMonday).subtract(7, 'days');
         const end = moment(currMonday).subtract(1, 'days');
-        ret.push(start.format('L') + ' - ' + end.format('L'));
-
+        ret.push(start.format("MM-DD-YYYY") + ' ~ ' + end.format("MM-DD-YYYY"));
         currMonday = start;
     }
 

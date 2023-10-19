@@ -1,4 +1,3 @@
-
 import os, sys
 
 from constants import openapi_key
@@ -71,8 +70,6 @@ def get_agent_chain(memory):
         suffix=suffix,
         input_variables=["input", "chat_history", "agent_scratchpad"],
     )
-    print(type(prompt))
-    print(prompt)
 
     llm_chain = LLMChain(llm=llm, prompt=prompt)
     agent = ZeroShotAgent(llm_chain=llm_chain, tools=tools)
@@ -83,5 +80,3 @@ def get_agent_chain(memory):
 def get_agent_answer(agent_chain, query: str):
     result = agent_chain.run(query)
     return result
-
-

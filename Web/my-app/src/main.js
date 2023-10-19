@@ -6,6 +6,7 @@ import ManualAdditionPopUp from './manualAdditionPopUp.js';
 import SelectWeek from './selectWeek.js'
 import { QUERY_STATUS } from './queryStatus.js';
 
+
 class Main extends React.Component {
     constructor(props) {
         super(props);
@@ -13,7 +14,7 @@ class Main extends React.Component {
             searchLogs: [],
             manualAddition: false,
             queryStatus: QUERY_STATUS.OFF,
-            eventSource: undefined,
+            data: null,
         }
     }
 
@@ -35,7 +36,7 @@ class Main extends React.Component {
      * @param {*} inputs 
      */
     isInvalidInput(inputs) {
-        const dateRegEx = /^\d{2}\/\d{2}\/\d{4}$/;
+        const dateRegEx = /^\d{2}-\d{2}-\d{4}$/;
         if (!dateRegEx.test(inputs.date)) {
             return true;
         }
@@ -101,7 +102,7 @@ class Main extends React.Component {
         event.preventDefault();
 
         if (this.isInvalidInput(inputs)) {
-            alert("Please enter a valid date in the format MM/DD/YYYY");  
+            alert("Please enter a valid date in the format MM-DD-YYYY");  
             return false;
         } 
 
@@ -117,18 +118,27 @@ class Main extends React.Component {
         return true;
     }
 
+    /**
+     * 
+     * 
+     * 
+     * @param {*} data: json formatted string 
+     * (list of dictionary with keys: date, employerName, jobTitle, contactInfo)
+     */
+    saveLogs(data) {
+        const logs = JSON.parse(data);
+        console.log(logs);
 
+        const searchLogs = this.state.searchLogs;
+        logs.forEach((log) => {
+            this.appendUnique(searchLogs, log);
+        });
 
-
-    startEventSource() {
-      if (this.eventSource !== undefined) return;
-
-      this.eventSource = new EventSource("http://127.0.0.1:8000/");
-      this.eventSource.onopen = e => console.log("ES open");
-      this.eventSource.onerror = e => console.log("ES error");
-      this.eventSource.onmessage = e => console.log(e.data);
+        this.setState ({
+            searchLogs: searchLogs,
+            queryStatus: QUERY_STATUS.OFF,
+        });
     }
-
 
     /**
      * https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
@@ -137,22 +147,27 @@ class Main extends React.Component {
      * @param {*} week: array of strings in (MM/DD/YYYY - MM/DD/YYYY) format
      */
     queryWeek(week) {
-        console.log(week.split(" - "));
-
-        // Option 1: include a date range in the query
-        // this.eventSource = new EventSource("http://000000000:8000/?start=2021-01-01&end=2021-01-07");
-
-        // Option 2: send a REST API to start off
-        // Then use sse to listen to the response
-
-        this.eventSource = new EventSource("http://127.0.0.1:8000/");
-        this.eventSource.onmessage = (e) => {
-            console.log(`message: ${e.data}`);
-          };
-
-        this.setState({
+        this.setState ({
             queryStatus: QUERY_STATUS.PENDING,
         });
+
+        const startEndDates = week.split(" ~ ");
+
+        let url = new URL('http://localhost:5000/stream')
+        url.searchParams.append('start', startEndDates[0]);
+        url.searchParams.append('end', startEndDates[1]);
+
+        const sse = new EventSource(url.toString());
+        sse.onmessage = event => {
+            this.saveLogs(event.data);
+            sse.close();
+        }
+        sse.onerror = _ => {
+            this.setState ({
+                queryStatus: QUERY_STATUS.OFF,
+            });
+            sse.close();
+        }
     }
 
 
@@ -174,6 +189,7 @@ class Main extends React.Component {
                 <div id="content-container">
                     <section id="search-bar">
                         <div className="button-container"> 
+                        
                             <button onClick={() => this.toggleManualAddition()}>Manually Add Job</button>
                         </div>
                         <div className="button-container"> 
@@ -204,6 +220,9 @@ class Main extends React.Component {
                     handleClose={() => this.toggleManualAddition()}
                 >
                 </ManualAdditionPopUp> 
+
+                (queryStatus)
+                
             </div>
         );
     }

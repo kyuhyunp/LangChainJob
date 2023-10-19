@@ -39,7 +39,7 @@ function ManualAdditionPopUp(props) {
                             <input 
                                 type="text" 
                                 name="date" 
-                                placeholder="Contact Date (MM/DD/YYYY)"
+                                placeholder="Contact Date (MM-DD-YYYY)"
                                 autoComplete="off"
                                 value={inputs.date}
                                 onChange={handleChange}

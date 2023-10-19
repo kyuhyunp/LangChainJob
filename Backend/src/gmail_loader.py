@@ -98,9 +98,7 @@ def get_gmail_content(service, msg):
     To specify accurate dates for other timezones pass the value in seconds instead
     ex) 2014/01/01 or 1388552400
 """
-def get_documents(startDate, endDate):
-    creds = get_credentials()
-
+def get_documents(creds, startDate, endDate):
     # Connect to the Gmail API
     service = build('gmail', 'v1', credentials=creds)
   
@@ -128,4 +126,3 @@ def get_documents(startDate, endDate):
     documents = text_splitter.split_documents(documents)
 
     return documents
-
