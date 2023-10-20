@@ -2,10 +2,10 @@ import React from 'react';
 
 import './css/main.css';
 import Table from './table.js';
-import ManualAdditionPopUp from './manualAdditionPopUp.js';
-import SelectWeek from './select_week.js'
+import ManualAdditionPopUp from './popUps/manual_addition_pop_up.js';
+import SelectWeek from './popUps/select_week_pop_up.js'
 import { QUERY_STATUS } from './query_status.js';
-import LoadingScreen from './loading_screen';
+import LoadingScreen from './popUps/loading_screen_pop_up';
 
 
 class Main extends React.Component {
@@ -71,13 +71,7 @@ class Main extends React.Component {
         return false;
     }
 
-
-    /**
-     * Append inputs to searchLogs if it does not exist in searchLog
-     * @param {*} searchLogs
-     * @param {*} inputs 
-     */
-    appendUnique(searchLogs, inputs) {
+    findUniqueIndex(searchLogs, inputs) {
         const idx = searchLogs.findIndex((log) => {
             return (
                 log.date === inputs.date &&
@@ -87,20 +81,29 @@ class Main extends React.Component {
             );
         });
 
+        return idx;
+    }
+
+    /**
+     * Append inputs to searchLogs if it does not exist in searchLog
+     * @param {*} searchLogs
+     * @param {*} inputs 
+     */
+    appendUnique(searchLogs, inputs) {
+        const idx = this.findUniqueIndex(searchLogs, inputs);
+
         if (idx === -1) {
             searchLogs.push(inputs);
         }
     }
 
-
     /**
      * Sets new state after the submission of the ManualAdditionPopUp form
      * @param {*} event 
      * @param {*} inputs 
-     * @param {*} completed
      */
     submitManualAdditionFormAndReturnStatus(event, inputs) {
-        event.preventDefault();
+        event.preventDefault(); // prevents automatic browser refresh
 
         if (this.isInvalidInput(inputs)) {
             alert("Please enter a valid date in the format MM-DD-YYYY");  
@@ -118,6 +121,41 @@ class Main extends React.Component {
 
         return true;
     }
+
+    /**
+     * Sets new state after the edit request of the ManualAdditionPopUp form
+     * @param {*} event 
+     * @param {*} inputs 
+     */
+    submitEditEntryFormAndReturnStatus(event, inputs) {
+        event.preventDefault(); // prevents automatic browser refresh
+
+        if (this.isInvalidInput(inputs)) {
+            alert("Please enter a valid date in the format MM-DD-YYYY");  
+            return false;
+        } 
+
+        const editEntry = this.state.editEntry;
+        const searchLogs = this.state.searchLogs;
+
+        if (this.findUniqueIndex(searchLogs, inputs) !== -1) {
+            alert("This entry already exists in the database");
+            return false;
+        }
+
+        searchLogs[editEntry] = inputs;
+        console.log(searchLogs);
+
+        this.setState ({
+            searchLogs: searchLogs,
+            manualAddition: false,
+            editEntry: null,
+        });
+
+        return true;
+    }
+
+
 
     /**
      * 
@@ -173,18 +211,19 @@ class Main extends React.Component {
 
     editEntry(index) {
         this.setState({
-            editEntry: index
+            manualAddition: true,
+            editEntry: index,
         });
     }
 
     deleteEntry(index) {
         this.setState({
-            searchLogs: this.state.searchLogs.filter((_, i) => i !== index)
+            searchLogs: this.state.searchLogs.filter((_, i) => i !== index),
         });
     }
 
     render() {
-        const { searchLogs, manualAddition, queryStatus } = this.state;
+        const { searchLogs, manualAddition, queryStatus, editEntry } = this.state;
         
         return (
             <div id="container">
@@ -230,11 +269,15 @@ class Main extends React.Component {
 
                 <ManualAdditionPopUp 
                     trigger={manualAddition} 
+                    editEntry={editEntry}
                     handleSubmit={(event, inputs) => 
                         this.submitManualAdditionFormAndReturnStatus(event, inputs)}
+                    handleEditEntry={(event, inputs) => this.submitEditEntryFormAndReturnStatus(event, inputs)}  
                     handleClose={() => this.toggleManualAddition()}
                 >
                 </ManualAdditionPopUp> 
+
+                
 
                 { queryStatus === QUERY_STATUS.PENDING && <LoadingScreen/> } 
                 
