@@ -3,9 +3,9 @@ import React from 'react';
 import './css/main.css';
 import Table from './table.js';
 import ManualAdditionPopUp from './manualAdditionPopUp.js';
-import SelectWeek from './selectWeek.js'
-import { QUERY_STATUS } from './queryStatus.js';
-import LoadingScreen from './loadingScreen';
+import SelectWeek from './select_week.js'
+import { QUERY_STATUS } from './query_status.js';
+import LoadingScreen from './loading_screen';
 
 
 class Main extends React.Component {

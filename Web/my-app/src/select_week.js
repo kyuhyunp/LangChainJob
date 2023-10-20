@@ -1,5 +1,5 @@
 import React from 'react';
-import { QUERY_STATUS } from './queryStatus';
+import { QUERY_STATUS } from './query_status';
 import moment from 'moment';
 
 const WEEKS = 52;
