@@ -165,6 +165,14 @@ class Main extends React.Component {
      * (list of dictionary with keys: date, employerName, jobTitle, contactInfo)
      */
     saveLogs(data) {
+        console.log(data);
+        if (data.includes("no data")) {
+            this.setState ({
+                queryStatus: QUERY_STATUS.OFF,
+            });
+            return;
+        }
+
         const logs = JSON.parse(data);
         console.log(logs);
 

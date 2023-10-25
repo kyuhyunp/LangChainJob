@@ -121,8 +121,5 @@ def get_documents(creds, startDate, endDate):
             continue
 
         documents.append(Document(page_content=body))
-
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    documents = text_splitter.split_documents(documents)
-
+        
     return documents
