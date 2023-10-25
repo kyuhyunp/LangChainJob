@@ -4,7 +4,7 @@ import json
 
 import gmail_loader
 import langchain_helper
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 
 app = Flask(__name__)
 
@@ -27,28 +27,19 @@ def stream():
             return f"data: no data\n\n"
         
         jobs = []
-        memory = langchain_helper.get_memory()
         for i in range(len(documents)):
+            # Each document contains at most one job information
             document = documents[i]
 
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=0)
-            splits = text_splitter.split_documents([document])
-
-            print([splits])
-            print("-------------\n\n\n\n")
-            conversation_chain = langchain_helper.get_conversational_retrieval_chain(splits, memory)
-            partial_response = langchain_helper.get_conversation_answer(conversation_chain)
-            partial_response = partial_response.replace("System: ", "", 1).strip()
-            memory.clear()
-
-            print(partial_response)
-            if partial_response is None or partial_response == "":
+            text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+            texts = text_splitter.split_documents([document])
+            
+            job = langchain_helper.generate_job_log(texts)
+            if len(job['employerName']) == 0:
                 continue
 
-            job = json.loads(partial_response)
             jobs.append(job)
             print(job)
-            partial_response = ""
 
         if len(jobs) == 0:
             return f"data: no data\n\n"

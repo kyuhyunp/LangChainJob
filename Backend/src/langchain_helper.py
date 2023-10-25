@@ -3,10 +3,8 @@ import os, sys
 from constants import openapi_key
 from constants import serpapi_key
 
-from langchain import LLMChain
-from langchain.agents import load_tools, AgentExecutor, ZeroShotAgent
+from langchain.chains import RetrievalQA
 from langchain.chains import ConversationalRetrievalChain
-from langchain.document_loaders import PyPDFLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
@@ -22,38 +20,19 @@ os.environ['OPENAI_API_KEY'] = openapi_key
 os.environ['SERPAPI_API_KEY'] = serpapi_key
 
 
-def get_memory():
-    return ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-
-def get_conversational_retrieval_chain(documents, memory):
+def generate_job_log(texts):
     embeddings = OpenAIEmbeddings()
-    vectorstore = Chroma.from_documents(documents, embeddings)
+    docsearch = Chroma.from_documents(texts, embeddings)
+    qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=docsearch.as_retriever(search_kwargs={'k': 1}))
     
-    general_system_template = """ 
-    Answer the following questions as best you can.
-    ---
-    {context}
-    ---
-    """
-    general_user_template = "```{question}```"
-    messages = [
-                SystemMessagePromptTemplate.from_template(general_system_template),
-                HumanMessagePromptTemplate.from_template(general_user_template)
-    ]
-    qa_prompt = ChatPromptTemplate.from_messages(messages)
+    job = {}
+    job["employerName"] = qa.run("What company did I apply to? Output just the direct single answer").strip()
+    job["date"] = qa.run(f"What date did I apply to {job['employerName']} in MM-DD-YYYY format? Output just the direct single answer").strip()
+    job["jobTitle"] = qa.run(f"For what job position did I apply to {job['employerName']}? Output just the direct single answer").strip()
 
-    return ConversationalRetrievalChain.from_llm(
-        OpenAI(temperature=0), 
-        vectorstore.as_retriever(search_kwargs={"k": 1}), 
-        memory=memory, 
-        combine_docs_chain_kwargs={'prompt': qa_prompt})
+    print(job)
+    return job
 
-def get_conversation_answer(conversational_chain):
-    result = conversational_chain({"question": """generate a json format with 
-                                   keys "date" in MM-DD-YYYY format, "employerName", "jobTitle", and values 
-    corresponding to the job I applied to."""})
-
-    return result["answer"]
 
 def searchURL(company):
     llm = OpenAI(temperature=0)

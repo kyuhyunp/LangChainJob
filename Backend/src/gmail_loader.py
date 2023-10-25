@@ -7,7 +7,6 @@ import base64
 from bs4 import BeautifulSoup
 
 from langchain.schema.document import Document
-from langchain.text_splitter import CharacterTextSplitter
 
 # Define the SCOPES. If modifying it, delete the token.pickle file.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
