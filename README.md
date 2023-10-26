@@ -17,4 +17,3 @@
 
 ## Work in Progress
 - Export to pdf
-- Behavioral interview preparation for the company
