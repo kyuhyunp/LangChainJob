@@ -26,32 +26,35 @@ def stream():
         if documents is None:
             return f"data: no data\n\n"
         
-        jobs = []
-        for i in range(len(documents)):
-            # Each document contains at most one job information
-            document = documents[i]
+        pagination_idx = 0
+        sz = len(documents)
+        while sz > 0:
+            jobs = []
+            for i in range(min(10, sz)):
+                # Each document contains at most one job information
+                document = documents[i + pagination_idx * 10]
 
-            text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-            texts = text_splitter.split_documents([document])
-            
-            job = langchain_helper.generate_job_log(texts)
-            if len(job['employerName']) == 0:
-                continue
+                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+                texts = text_splitter.split_documents([document])
+                
+                job = langchain_helper.generate_job_log(texts)
+                if len(job['employerName']) == 0:
+                    continue
 
-            jobs.append(job)
-            print(job)
+                jobs.append(job)
+                print(job)
 
-        if len(jobs) == 0:
-            return f"data: no data\n\n"
-
-        for i in range(len(jobs)):
-            try:
-                jobs[i]['contactInfo'] = langchain_helper.searchURL(jobs[i]['employerName'])   
-            except:
-                print(f"url not found for {jobs[i]['employerName']}")       
+                try:
+                    jobs[i]['contactInfo'] = langchain_helper.searchURL(jobs[i]['employerName'])   
+                except:
+                    jobs[i]['contactInfo'] = "Not Available"
     
-        return f"data: {json.dumps(jobs)}\n\n"
-    
+            yield f"data: {json.dumps(jobs)}\n\n"
+            sz -= min(10, sz)
+            pagination_idx += 1
+        
+        yield f"data: no data\n\n"
+
     data = get_data(startDate, endDate)
     print(data)
     
