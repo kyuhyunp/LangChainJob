@@ -6,9 +6,10 @@
 
 [wiki_page]: https://github.com/kyuhyunp/LangChainJob/wiki
 
-
+## Main Table View
 ![image](https://github.com/kyuhyunp/LangChainJob/assets/70357536/eb052d77-5433-445e-8563-c20b6ef75aca)
 
+## Export to PDF 
 ![image](https://github.com/kyuhyunp/LangChainJob/assets/70357536/650bdc17-92ae-4048-8fa4-1be702c40bb1)
 
 
