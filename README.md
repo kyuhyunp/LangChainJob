@@ -13,7 +13,4 @@
 - Query for a week of email from Gmail to load job information to table
 - Manually add job information to table
 - Edit or delete existing table entries
-
-
-## Work in Progress
 - Export to pdf
