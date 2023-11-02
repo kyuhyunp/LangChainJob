@@ -89,6 +89,20 @@ button {
     padding: 5px;
 }
 
+#table-header {
+    display: flex;
+    align-items: center;
+}
+
+#table-header h3 {
+    flex-grow: 1
+}
+
+#table-header button {
+
+    margin-right: 5%;
+    height: 25px;
+}
 /* For generating a table */
 
 table {

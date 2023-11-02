@@ -6,6 +6,8 @@ import ManualAdditionPopUp from './popUps/manual_addition_pop_up.js';
 import SelectWeek from './popUps/select_week_pop_up.js'
 import { QUERY_STATUS } from './query_status.js';
 import LoadingScreen from './popUps/loading_screen_pop_up';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 
 class Main extends React.Component {
@@ -206,7 +208,7 @@ class Main extends React.Component {
                 sse.close();
                 return;
             }
-            
+
             this.saveLogs(event.data);
             sse.close();
         }
@@ -229,6 +231,32 @@ class Main extends React.Component {
         this.setState({
             searchLogs: this.state.searchLogs.filter((_, i) => i !== index),
         });
+    }
+
+    exportPDF() {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+    
+        const marginLeft = 40;
+        const doc = new jsPDF(orientation, unit, size);
+    
+        doc.setFontSize(15);
+    
+        const title = "Job Search Report";
+        const headers = [["CONTACT DATE", "EMPLOYER NAME", "JOB TITLE", "CONTACT INFORMATION"]];
+
+        const data = this.state.searchLogs.map(elt=> [elt.date, elt.employerName, elt.jobTitle, elt.contactInfo]);
+    
+        let content = {
+            startY: 50,
+            head: headers,
+            body: data
+          };
+      
+          doc.text(title, marginLeft, 40);
+          doc.autoTable(content);
+          doc.save("job_search_report.pdf")
     }
 
     render() {
@@ -261,7 +289,10 @@ class Main extends React.Component {
                     </section>
                     <section id="job-list">
                         <p>Below is a list of the job search contacts.</p>
-                        <h3>Job Search Logs</h3>
+                        <div id="table-header">
+                            <h3>Job Search Logs</h3>
+                            <button onClick={() => this.exportPDF()}>Generate Report</button>
+                        </div>
 
                         <Table searchLogs={searchLogs} 
                         editEntry={(index) => this.editEntry(index)}
